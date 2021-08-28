@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "remove-firebase": "node ./removeFirebase.js && rm removeFirebase.js"
   },
   "dependencies": {
     "firebase": "^8.9.1",
