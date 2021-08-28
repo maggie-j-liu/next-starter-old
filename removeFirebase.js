@@ -29,5 +29,4 @@ writeFileSync("./pages/_app.jsx", newApp);
 
 // remove this script from package.json
 delete pkg.scripts["remove-firebase"];
-console.log(pkg);
 writeFileSync("./package.json", JSON.stringify(pkg, null, 2) + "\n");
