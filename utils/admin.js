@@ -7,6 +7,7 @@ if (!admin.apps.length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
     }),
+    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
   });
 }
 
