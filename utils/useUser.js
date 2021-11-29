@@ -1,5 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import firebase from "./firebase";
+import { auth } from "./firebase";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { useRouter } from "next/router";
 
 const useAuth = () => {
@@ -15,50 +22,39 @@ const useAuth = () => {
       setLoading(false);
     }
   };
-  const signInWithGoogle = (fn) => {
+  const signInWithGoogle = async (fn) => {
     setLoading(true);
-    return firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then(async (response) => {
-        handleUser(response.user);
-        if (fn) {
-          await fn(response);
-        }
-        router.back();
-      });
+    const response = await signInWithPopup(auth, new GoogleAuthProvider());
+    handleUser(response.user);
+    if (fn) {
+      await fn(response);
+    }
+    router.back();
   };
-  const createUserWithEmail = (email, password, username, fn) => {
+  const createUserWithEmail = async (email, password, username, fn) => {
     setLoading(true);
-    return firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(async (response) => {
-        handleUser(response.user);
-        if (fn) {
-          await fn(response, username);
-        }
-        router.back();
-      });
+    const response = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    handleUser(response.user);
+    if (fn) {
+      await fn(response, username);
+    }
+    router.back();
   };
 
-  const signInWithEmail = (email, password) => {
-    return firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((response) => {
-        handleUser(response.user);
-        router.back();
-      });
+  const signInWithEmail = async (email, password) => {
+    const response = await signInWithEmailAndPassword(auth, email, password);
+    handleUser(response.user);
+    router.back();
   };
   const logout = () => {
-    return firebase
-      .auth()
-      .signOut()
-      .then(() => handleUser(false));
+    return signOut(auth).then(() => handleUser(false));
   };
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged(handleUser);
+    const unsubscribe = onAuthStateChanged(auth, handleUser);
     return () => {
       unsubscribe();
     };
